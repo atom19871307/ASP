@@ -1,0 +1,24 @@
+﻿@page "/Factorial"
+@rendermode InteractiveServer
+
+@using System.Numerics;
+
+<h1>Factoral</h1>
+
+<input type="number" @bind="n" @bind:after="Calculate" />
+<h3> ! = @f;</h3>
+<button @onclick="Calculate">Calculate</button>
+
+@code 
+{
+    int n = 0;
+    BigInteger f = 1;
+    void Calculate()
+    {
+        f = 1;
+        for(int i = 1; i <= n; i++)
+        {
+            f *= i;
+        }
+    }
+}
