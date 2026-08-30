@@ -1,12 +1,22 @@
-﻿@page "/Factorial"
-@rendermode InteractiveServer
+﻿@page "/factoral"
 
-@using System.Numerics;
+<h3>Factoral</h3>
 
-<h1>Factorial</h1>
+<input type="number" @bind="n" />
+<button @onclick="Calculate">Calculate</button>
 
-<div class="factorial">
-	<input type="number" @bind="n" @bind:after="Calculate" />
-	<h3> ! = @f;</h3>
-</div>
-@* <button @onclick="Calculate">Calculate</button> *@
+<p>Factoral of @n is @f</p>
+
+@code {
+    private int n = 5;
+    private int f = 1;
+
+    private void Calculate()
+    {
+        f = 1;
+        for (int i = 1; i <= n; i++)
+        {
+            f *= i;
+        }
+    }
+}
