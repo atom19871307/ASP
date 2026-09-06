@@ -1,14 +1,14 @@
-﻿@page "/factoral"
+﻿@page "/factorial"
 @rendermode InteractiveServer
 
-<h3>Factoral</h3>
+<h3>Factorial</h3>
 
 <input type="number" @bind="n" />
 <button @onclick="Calculate">Calculate</button>
 
 <p>Factoral of @n is @f</p>
 
-@code 
+@* @code 
 {
     private int n = 5;
     private int f = 1;
@@ -21,4 +21,4 @@
             f *= i;
         }
     }
-}
+} *@
