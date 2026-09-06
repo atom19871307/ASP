@@ -1,0 +1,23 @@
+﻿body 
+{
+}
+ul
+{
+    list-style:none;
+}
+label
+{
+    width:55%;
+    display:inline-flex;
+    justify-content:space-between;
+}
+input[type=checkbox]:checked + label
+{
+    color:gray;
+    text-decoration:line-through;
+}
+.statistics
+{
+    display:flex;
+    justify-content:space-between;
+}
