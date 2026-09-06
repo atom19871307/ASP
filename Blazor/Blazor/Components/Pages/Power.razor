@@ -1,0 +1,39 @@
+﻿@page "/power"
+
+<h3>Power Calculator</h3>
+
+<div class="form-group">
+    <label>Base (հիմք):</label>
+    <!-- Ավելացված է @bind:event="oninput" -->
+    <input type="number" @bind="baseNumber" @bind:event="oninput" class="form-control" />
+</div>
+
+<div class="form-group">
+    <label>Exponent (աստիճան):</label>
+    <!-- Ավելացված է @bind:event="oninput" -->
+    <input type="number" @bind="exponent" @bind:event="oninput" class="form-control" />
+</div>
+
+@if (result.HasValue)
+{
+    <div class="alert alert-success mt-3">
+        <strong>@baseNumber</strong> ^ <strong>@exponent</strong> = <strong>@result</strong>
+    </div>
+}
+
+@code 
+{
+    private double baseNumber = 2;
+    private double exponent = 3;
+    private double? result;
+
+    // Այս մեթոդը կկանչվի ԱՄԵՆ ԱՆԳԱՄ, երբ ինչ-որ բան փոխվի դաշտերում
+    private void CalculatePower()
+    {
+        // Կատարում ենք հաշվարկը
+        result = Math.Pow(baseNumber, exponent);
+
+        // Սա ԱՄԵՆԱԿԱՐԵՎՈՐ տողն է։ Այն ստիպում է Blazor-ին թարմացնել էկրանը։
+        StateHasChanged();
+    }
+}
