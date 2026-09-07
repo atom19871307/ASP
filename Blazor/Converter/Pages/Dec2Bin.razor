@@ -1,0 +1,25 @@
+﻿@page "/converter/dec2bin"
+
+<h3>Dec2Bin Converter</h3>
+
+<div class="form-group">
+    <label>Decimal:</label>
+    <input type="number" @bind="decimalValue" @bind:event="oninput" class="form-control" />
+</div>
+
+@if (result != null)
+{
+    <div class="alert alert-success mt-3">
+        <strong>Binary:</strong> @result
+    </div>
+}
+
+@code {
+    private int decimalValue = 0;
+    private string? result;
+
+    private void OnValueChanged()
+    {
+        result = Convert.ToString(decimalValue, 2);
+    }
+}

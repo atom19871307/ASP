@@ -1,0 +1,32 @@
+﻿@page "/converter/hex2dec"
+
+<h3>Hex2Dec Converter</h3>
+
+<div class="form-group">
+    <label>Hexadecimal:</label>
+    <input type="text" @bind="hexValue" @bind:event="oninput" class="form-control" />
+</div>
+
+@if (result.HasValue)
+{
+    <div class="alert alert-success mt-3">
+        <strong>Decimal:</strong> @result
+    </div>
+}
+
+@code {
+    private string hexValue = "0";
+    private int? result;
+
+    private void OnValueChanged()
+    {
+        try
+        {
+            result = Convert.ToInt32(hexValue, 16);
+        }
+        catch
+        {
+            result = null;
+        }
+    }
+}

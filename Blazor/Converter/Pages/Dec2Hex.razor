@@ -1,0 +1,25 @@
+﻿@page "/converter/dec2hex"
+
+<h3>Dec2Hex Converter</h3>
+
+<div class="form-group">
+    <label>Decimal:</label>
+    <input type="number" @bind="decimalValue" @bind:event="oninput" class="form-control" />
+</div>
+
+@if (result != null)
+{
+    <div class="alert alert-success mt-3">
+        <strong>Hexadecimal:</strong> @result
+    </div>
+}
+
+@code {
+    private int decimalValue = 0;
+    private string? result;
+
+    private void OnValueChanged()
+    {
+        result = decimalValue.ToString("X");
+    }
+}

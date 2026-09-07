@@ -1,0 +1,32 @@
+﻿@page "/converter/bin2dec"
+
+<h3>Bin2Dec Converter</h3>
+
+<div class="form-group">
+    <label>Binary:</label>
+    <input type="text" @bind="binaryValue" @bind:event="oninput" class="form-control" />
+</div>
+
+@if (result.HasValue)
+{
+    <div class="alert alert-success mt-3">
+        <strong>Decimal:</strong> @result
+    </div>
+}
+
+@code {
+    private string binaryValue = "0";
+    private int? result;
+
+    private void OnValueChanged()
+    {
+        try
+        {
+            result = Convert.ToInt32(binaryValue, 2);
+        }
+        catch
+        {
+            result = null;
+        }
+    }
+}

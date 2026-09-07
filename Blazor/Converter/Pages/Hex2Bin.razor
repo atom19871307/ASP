@@ -1,0 +1,33 @@
+﻿@page "/converter/hex2bin"
+
+<h3>Hex2Bin Converter</h3>
+
+<div class="form-group">
+    <label>Hexadecimal:</label>
+    <input type="text" @bind="hexValue" @bind:event="oninput" class="form-control" />
+</div>
+
+@if (result != null)
+{
+    <div class="alert alert-success mt-3">
+        <strong>Binary:</strong> @result
+    </div>
+}
+
+@code {
+    private string hexValue = "0";
+    private string? result;
+
+    private void OnValueChanged()
+    {
+        try
+        {
+            int dec = Convert.ToInt32(hexValue, 16);
+            result = Convert.ToString(dec, 2);
+        }
+        catch
+        {
+            result = null;
+        }
+    }
+}
