@@ -4,15 +4,15 @@
 
 <div class="form-group">
     <label>Base (հիմք):</label>
-    <!-- Ավելացված է @bind:event="oninput" -->
     <input type="number" @bind="baseNumber" @bind:event="oninput" class="form-control" />
 </div>
 
 <div class="form-group">
     <label>Exponent (աստիճան):</label>
-    <!-- Ավելացված է @bind:event="oninput" -->
     <input type="number" @bind="exponent" @bind:event="oninput" class="form-control" />
 </div>
+
+<button class="btn btn-primary" @onclick="CalculatePower">Calculate</button>
 
 @if (result.HasValue)
 {
@@ -21,19 +21,17 @@
     </div>
 }
 
-@code 
-{
+@code {
     private double baseNumber = 2;
     private double exponent = 3;
     private double? result;
 
-    // Այս մեթոդը կկանչվի ԱՄԵՆ ԱՆԳԱՄ, երբ ինչ-որ բան փոխվի դաշտերում
-    private void CalculatePower()
+    private async Task CalculatePower()
     {
-        // Կատարում ենք հաշվարկը
+        // ՈՉԻՆՉ ՉԻ ԱՐԵՔ Task.Yield()-ի հետ: Ուղղակի հաշվարկեք:
         result = Math.Pow(baseNumber, exponent);
 
-        // Սա ԱՄԵՆԱԿԱՐԵՎՈՐ տողն է։ Այն ստիպում է Blazor-ին թարմացնել էկրանը։
-        StateHasChanged();
+        // Սա կստիպի Blazor-ին թարմացնել էկրանը:
+        await InvokeAsync(StateHasChanged);
     }
 }

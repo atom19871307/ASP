@@ -1,0 +1,46 @@
+﻿@page "/fibonacci"
+
+<h3>Fibonacci Calculator</h3>
+
+<div class="form-group mt-3">
+    <label>Մուտքագրեք n թիվը (օրինակ՝ 10):</label>
+    <input type="number" @bind="n" class="form-control" />
+</div>
+
+<!-- ԱՅՍՏԵՂ ԱՎԵԼԱՑՐԵՔ ԿՈՃԱԿԸ -->
+<button class="btn btn-primary" @onclick="CalculateFibonacci">Calculate</button>
+
+<div class="alert alert-success mt-4">
+    <strong>Fibonacci(@n)</strong> = <strong>@fibonacciResult</strong>
+</div>
+
+@code {
+    private int n = 10;
+    private long fibonacciResult = 55;
+
+    // Սա է ձեր մեթոդը
+    private async Task CalculateFibonacci()
+    {
+        fibonacciResult = GetFibonacci(n);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private long GetFibonacci(int number)
+    {
+        if (number == 0) return 0;
+        if (number == 1) return 1;
+
+        long a = 0;
+        long b = 1;
+        long result = 0;
+
+        for (int i = 2; i <= number; i++)
+        {
+            result = a + b;
+            a = b;
+            b = result;
+        }
+
+        return result;
+    }
+}
