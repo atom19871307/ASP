@@ -17,56 +17,59 @@
 }
 else
 {
-    <div class="card shadow-sm border-0" style="max-width: 600px;">
+    <div class="card shadow-sm border-0" style="max-width: 800px;">
         <div class="card-body p-4">
             @* Форма редактирования (Խմբագրման ձև) *@
-            <EditForm method="post" Model="Movie" OnValidSubmit="UpdateMovie" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary class="text-danger" role="alert" />
+            <div class="movie-container">
+                <EditForm method="post" Model="Movie" OnValidSubmit="UpdateMovie" FormName="edit" Enhance>
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="text-danger" role="alert" />
 
-                @* Скрытое поле для Id (Թաքնված դաշտ Id-ի համար) *@
-                <input type="hidden" name="Movie.Id" value="@Movie.Id" />
+                    @* Скрытое поле для Id (Թաքնված դաշտ Id-ի համար) *@
+                    <input type="hidden" name="Movie.Id" value="@Movie.Id" />
 
-                <div class="mb-3">
-                    @* Поле: Название (Դաշտ. Վերնագիր) *@
-                    <label for="title" class="form-label fw-bold">Название (Title):</label>
-                    <InputText id="title" @bind-Value="Movie.Title" class="form-control" placeholder="Введите название фильма" />
-                    <ValidationMessage For="() => Movie.Title" class="text-danger" />
-                </div>
+                    <div class="mb-3">
+                        @* Поле: Название (Դաշտ. Վերնագիր) *@
+                        <label for="title" class="form-label fw-bold">Название (Title):</label>
+                        <InputText id="title" @bind-Value="Movie.Title" class="form-control" placeholder="Введите название фильма" />
+                        <ValidationMessage For="() => Movie.Title" class="text-danger" />
+                    </div>
 
-                @* Поле: Дата выхода (Դաշտ. Թողարկման ամսաթիվ) *@
-                <div class="mb-3">
-                    <label for="releaseDate" class="form-label fw-bold">Дата выхода (Release Date):</label>
-                    <InputDate id="releaseDate" @bind-Value="Movie.ReleaseDate" class="form-control" />
-                    <ValidationMessage For="() => Movie.ReleaseDate" class="text-danger" />
-                </div>
+                    @* Поле: Дата выхода (Դաշտ. Թողարկման ամսաթիվ) *@
+                    <div class="mb-3">
+                        <label for="releaseDate" class="form-label fw-bold">Дата выхода (Release Date):</label>
+                        <InputDate id="releaseDate" @bind-Value="Movie.ReleaseDate" class="form-control" />
+                        <ValidationMessage For="() => Movie.ReleaseDate" class="text-danger" />
+                    </div>
 
-                @* Поле: Жанр (Դաշտ. Ժանր) *@
-                <div class="mb-3">
-                    <label for="genre" class="form-label fw-bold">Жанр (Genre):</label>
-                    <InputText id="genre" @bind-Value="Movie.Genre" class="form-control" placeholder="Например: Боевик, Комедия" />
-                    <ValidationMessage For="() => Movie.Genre" class="text-danger" />
-                </div>
+                    @* Поле: Жанр (Դաշտ. Ժանր) *@
+                    <div class="mb-3">
+                        <label for="genre" class="form-label fw-bold">Жанр (Genre):</label>
+                        <InputText id="genre" @bind-Value="Movie.Genre" class="form-control" placeholder="Например: Боевик, Комедия" />
+                        <ValidationMessage For="() => Movie.Genre" class="text-danger" />
+                    </div>
 
-                @* Поле: URL (Դաշտ. Հղում) *@
-                <div class="mb-3">
-                    <label for="url" class="form-label fw-bold">URL (Ссылка ):</label>
-                    <InputText id="url" @bind-Value="Movie.URL" class="form-control" placeholder="https://..." />
-                    <ValidationMessage For="() => Movie.URL" class="text-danger" />
-                </div>
+                    @* Поле: URL (Դաշտ. Հղում) *@
+                    <div class="mb-3">
+                        <label for="url" class="form-label fw-bold">URL (Ссылка ):</label>
+                        <InputText id="url" @bind-Value="Movie.URL" class="form-control" placeholder="https://..." />
+                        <ValidationMessage For="() => Movie.URL" class="text-danger" />
+                    </div>
 
-                @* Поле: Постер (Դաշտ. Պաստառ) *@
-                <div class="mb-3">
-                    <label for="poster" class="form-label fw-bold">Постер  (Poster):</label>
-                    <InputText id="poster" @bind-Value="Movie.Poster" class="form-control" placeholder="Ссылка на постер" />
-                    <ValidationMessage For="() => Movie.Poster" class="text-danger" />
-                </div>
+                    @* Поле: Постер (Դաշտ. Պաստառ) *@
+                    <div class="mb-3">
+                        <label for="poster" class="form-label fw-bold">Постер  (Poster):</label>
+                        <InputText id="poster" @bind-Value="Movie.Poster" class="form-control" placeholder="Ссылка на постер" />
+                        <ValidationMessage For="() => Movie.Poster" class="text-danger" />
+                    </div>
 
-                @* Кнопки управления (Կառավարման կոճակներ) *@
-                <div class="d-flex gap-2 mt-4">
-                    <button type="submit" class="btn btn-primary px-4">&#9989;&#128190; Сохранить</button>
-                </div>
-            </EditForm>
+                    @* Кнопки управления (Կառավարման կոճակներ) *@
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary px-4">&#9989;&#128190; Сохранить</button>
+                    </div>
+                </EditForm>
+                <img src="@Movie.Poster" />
+            </div>
         </div>
     </div>
 }
