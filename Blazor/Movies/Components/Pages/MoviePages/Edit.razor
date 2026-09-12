@@ -1,110 +1,127 @@
-@page "/movies/edit"
+﻿@page "/movies/edit"
 @using Microsoft.EntityFrameworkCore
 @using Movies.Models
 @inject IDbContextFactory<MoviesContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Edit</PageTitle>
+@* Заголовок страницы (Էջի վերնագիրը) *@
+<PageTitle>Редактировать фильм</PageTitle>
 
-@*<h1>Edit</h1>*@
+@* Основной заголовок (Գլխավոր վերնագիր) *@
+<h1 class="mb-4">✏️ Редактировать фильм</h1>
 
-@*<h2>Movie</h2>*@
-<hr />
 @if (Movie is null)
 {
-    <p><em>Loading...</em></p>
+    @* Состояние загрузки (Բեռնման վիճակ) *@
+    <p><em>Загрузка...</em></p>
 }
 else
 {
-    <h1>@Movie.Title edit</h1>
-    <div class="row">
-        <div class="col-md-4">
+    <div class="card shadow-sm border-0" style="max-width: 600px;">
+        <div class="card-body p-4">
+            @* Форма редактирования (Խմբագրման ձև) *@
             <EditForm method="post" Model="Movie" OnValidSubmit="UpdateMovie" FormName="edit" Enhance>
                 <DataAnnotationsValidator />
-                <ValidationSummary role="alert"/>
+                <ValidationSummary class="text-danger" role="alert" />
+
+                @* Скрытое поле для Id (Թաքնված դաշտ Id-ի համար) *@
                 <input type="hidden" name="Movie.Id" value="@Movie.Id" />
+
                 <div class="mb-3">
-                    <label for="title" class="form-label">Title:</label>
-                    <InputText id="title" @bind-Value="Movie.Title" class="form-control" />
+                    @* Поле: Название (Դաշտ. Վերնագիր) *@
+                    <label for="title" class="form-label fw-bold">Название (Title):</label>
+                    <InputText id="title" @bind-Value="Movie.Title" class="form-control" placeholder="Введите название фильма" />
                     <ValidationMessage For="() => Movie.Title" class="text-danger" />
                 </div>
+
+                @* Поле: Дата выхода (Դաշտ. Թողարկման ամսաթիվ) *@
                 <div class="mb-3">
-                    <label for="releasedate" class="form-label">ReleaseDate:</label>
-                    <InputDate id="releasedate" @bind-Value="Movie.ReleaseDate" class="form-control" />
+                    <label for="releaseDate" class="form-label fw-bold">Дата выхода (Release Date):</label>
+                    <InputDate id="releaseDate" @bind-Value="Movie.ReleaseDate" class="form-control" />
                     <ValidationMessage For="() => Movie.ReleaseDate" class="text-danger" />
                 </div>
+
+                @* Поле: Жанр (Դաշտ. Ժանր) *@
                 <div class="mb-3">
-                    <label for="genre" class="form-label">Genre:</label>
-                    <InputText id="genre" @bind-Value="Movie.Genre" class="form-control" />
+                    <label for="genre" class="form-label fw-bold">Жанр (Genre):</label>
+                    <InputText id="genre" @bind-Value="Movie.Genre" class="form-control" placeholder="Например: Боевик, Комедия" />
                     <ValidationMessage For="() => Movie.Genre" class="text-danger" />
                 </div>
+
+                @* Поле: URL (Դաշտ. Հղում) *@
                 <div class="mb-3">
-                    <label for="url" class="form-label">URL:</label>
-                    <InputText id="url" @bind-Value="Movie.URL" class="form-control" />
+                    <label for="url" class="form-label fw-bold">URL (Ссылка ):</label>
+                    <InputText id="url" @bind-Value="Movie.URL" class="form-control" placeholder="https://..." />
                     <ValidationMessage For="() => Movie.URL" class="text-danger" />
                 </div>
+
+                @* Поле: Постер (Դաշտ. Պաստառ) *@
                 <div class="mb-3">
-                    <label for="poster" class="form-label">Poster:</label>
-                    <InputText id="poster" @bind-Value="Movie.Poster" class="form-control" />
+                    <label for="poster" class="form-label fw-bold">Постер  (Poster):</label>
+                    <InputText id="poster" @bind-Value="Movie.Poster" class="form-control" placeholder="Ссылка на постер" />
                     <ValidationMessage For="() => Movie.Poster" class="text-danger" />
                 </div>
-                <button type="submit" class="btn btn-primary">Save</button>
+
+                @* Кнопки управления (Կառավարման կոճակներ) *@
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary px-4">&#9989;&#128190; Сохранить</button>
+                </div>
             </EditForm>
         </div>
     </div>
 }
 
-<div>
-    <a href="/movies">Back to List</a>
-</div>
-
-@code {
+@code 
+{
+    // Идентификатор фильма из строки запроса (Ֆիլմի Id-ն հարցման տողից)
     [SupplyParameterFromQuery]
     private int Id { get; set; }
 
+    // Модель фильма, привязанная к форме (Ֆիլմի մոդելը, կապված ձևի հետ)
     [SupplyParameterFromForm]
     private Movie? Movie { get; set; }
 
+    // Инициализация компонента (Կոմպոնենտի սկզբնավորում)
     protected override async Task OnInitializedAsync()
     {
+        // Если Id некорректен, перенаправляем на список (Եթե Id-ն սխալ է, վերադարձնում ենք ցանկին)
+        if (Id <= 0)
+        {
+            NavigationManager.NavigateTo("/movies");
+            return;
+        }
+
         using var context = DbFactory.CreateDbContext();
+
+        // Загружаем фильм из БД, если он ещё не загружен (Բեռնում ենք ֆիլմը ԲԴ-ից, եթե դեռ բեռնված չէ)
         Movie ??= await context.Movie.FirstOrDefaultAsync(m => m.Id == Id);
 
+        // Если фильм не найден, перенаправляем (Եթե ֆիլմը չի գտնվել, վերադարձնում ենք)
         if (Movie is null)
         {
-            NavigationManager.NavigateTo("notfound");
+            NavigationManager.NavigateTo("/movies");
         }
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    // Сохранение изменений (Փոփոխությունների պահպանում)
     private async Task UpdateMovie()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Movie!).State = EntityState.Modified;
-
-        try
+        if (Movie is not null)
         {
+            using var context = DbFactory.CreateDbContext();
+
+            // Помечаем объект как изменённый (Նշում ենք օբյեկտը որպես փոփոխված)
+            context.Attach(Movie).State = EntityState.Modified;
+            // Сохраняем в БД (Պահպանում ենք ԲԴ-ում)
             await context.SaveChangesAsync();
         }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!MovieExists(Movie!.Id))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
-        }
-
+        // Возвращаемся к списку (Վերադառնում ենք ցանկին)
         NavigationManager.NavigateTo("/movies");
     }
 
-    private bool MovieExists(int id)
-    {
-        using var context = DbFactory.CreateDbContext();
-        return context.Movie.Any(e => e.Id == id);
-    }
+    // Отмена и возврат к списку (Չեղարկում և վերադարձ ցանկին)
+    // private void Cancel()
+    // {
+    //     NavigationManager.NavigateTo("/movies");
+    // }
 }
