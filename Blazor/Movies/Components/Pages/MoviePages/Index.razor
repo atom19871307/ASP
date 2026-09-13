@@ -1,4 +1,5 @@
-@page "/movies"
+﻿@page "/movies"
+@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 @using Movies.Models
@@ -14,25 +15,69 @@
     <a href="movies/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="context.Movie">
-    <PropertyColumn Property="movie => movie.Title" />
+@* 
+    У пользователя должна быть возможность выбирать количество фильмов на странице.
+    Օգտատերը պետք է կարողանա ընտրել էջի ֆիլմերի քանակը:
+*@
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        @* 
+            Выпадающий список для выбора количества фильмов на странице.
+            Բացվող ցանկ՝ էջի ֆիլմերի քանակը ընտրելու համար:
+        *@
+        <label class="me-2">Показывать по:</label>
+        <select class="form-select d-inline-block w-auto" @bind="itemsPerPage" @bind:after="OnPageSizeChanged">
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+        </select>
+        <span class="ms-2">фильмов на странице</span>
+    </div>
+</div>
+@* 
+    QuickGrid автоматически отображает данные и применяет пагинацию.
+    QuickGrid-ը ավտոմատ ցուցադրում է տվյալները և կիրառում էջատումը:
+*@
+
+<QuickGrid Class="table" Items="context.Movie" Pagination="pagination">
+    <TemplateColumn Context="movie" Title="Title">
+        <a href="@($"movies/details?id={movie.Id}")">@movie.Title</a>
+    </TemplateColumn>
     <PropertyColumn Property="movie => movie.ReleaseDate" />
     <PropertyColumn Property="movie => movie.Genre" />
- 
-
-    <TemplateColumn Context="movie">
-
-        <a href="@($"movies/details?id={movie.Id}")">Details</a> |
- 
-    </TemplateColumn>
 </QuickGrid>
 
-@code {
+@* 
+    Paginator отображает кнопки навигации по страницам.
+    Paginator-ը ցուցադրում է էջերի նավիգացիայի կոճակները:
+*@
+<Paginator State="pagination" />
+
+@code 
+{
     private MoviesContext context = default!;
+
+    // Состояние пагинации с начальным количеством элементов на странице.
+    // Էջատման վիճակ՝ սկզբնական էջի չափով:
+    PaginationState pagination = new PaginationState { ItemsPerPage = 3 };
+
+    // Переменная, привязанная к выпадающему списку.
+    // Փոփոխական, որը կապված է բացվող ցանկի հետ:
+    private int itemsPerPage = 3;
 
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
+    }
+
+    // Метод вызывается при изменении значения в выпадающем списке.
+    // Մեթոդը կանչվում է, երբ փոխվում է արժեքը բացվող ցանկում:
+    private void OnPageSizeChanged()
+    {
+        // Обновляем количество элементов на странице в состоянии пагинации.
+        // Թարմացնում ենք էջի չափը էջատման վիճակում:
+        pagination.ItemsPerPage = itemsPerPage;
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
