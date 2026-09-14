@@ -1,0 +1,72 @@
+﻿@page "/students/delete"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Удалить студента</PageTitle>
+
+<h1>Удалить студента</h1>
+
+@if (student is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <div class="card shadow-sm border-0" style="max-width: 600px;">
+        <div class="card-body p-4">
+            <h3>Вы уверены, что хотите удалить этого студента?</h3>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-4">ID:</dt>
+                <dd class="col-sm-8">@student.StudentId</dd>
+
+                <dt class="col-sm-4">Фамилия:</dt>
+                <dd class="col-sm-8">@student.LastName</dd>
+
+                <dt class="col-sm-4">Имя:</dt>
+                <dd class="col-sm-8">@student.FirstName</dd>
+
+                <dt class="col-sm-4">Группа:</dt>
+                <dd class="col-sm-8">@student.Group?.GroupName</dd>
+            </dl>
+
+            <div class="d-flex gap-2 mt-4">
+                <button class="btn btn-danger px-4" @onclick="DeleteStudent">🗑️ Удалить</button>
+                <a href="/students" class="btn btn-secondary px-4">❌ Отмена</a>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    private Student? student;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        student = await context.Students
+            .Include(s => s.Group)
+            .FirstOrDefaultAsync(s => s.StudentId == Id);
+
+        if (student is null) NavigationManager.NavigateTo("/students");
+    }
+
+    private async Task DeleteStudent()
+    {
+        if (student is null) return;
+
+        using var context = DbFactory.CreateDbContext();
+        var studentFromDb = await context.Students.FindAsync(student.StudentId);
+        if (studentFromDb is null) return;
+
+        context.Students.Remove(studentFromDb);
+        await context.SaveChangesAsync();
+
+        NavigationManager.NavigateTo("/students");
+    }
+}

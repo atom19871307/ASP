@@ -1,0 +1,63 @@
+﻿@page "/directions/delete"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Удалить направление</PageTitle>
+
+<h1>Удалить направление</h1>
+
+@if (direction is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <div class="card shadow-sm border-0" style="max-width: 500px;">
+        <div class="card-body p-4">
+            <h3>Вы уверены, что хотите удалить это направление?</h3>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-3">ID:</dt>
+                <dd class="col-sm-9">@direction.DirectionId</dd>
+
+                <dt class="col-sm-3">Название:</dt>
+                <dd class="col-sm-9">@direction.DirectionName</dd>
+            </dl>
+
+            <div class="d-flex gap-2 mt-4">
+                <button class="btn btn-danger px-4" @onclick="DeleteDirection">🗑️ Удалить</button>
+                <a href="/directions" class="btn btn-secondary px-4">❌ Отмена</a>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    private Direction? direction;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        direction = await context.Directions.FindAsync((byte)Id);
+        if (direction is null) NavigationManager.NavigateTo("/directions");
+    }
+
+    private async Task DeleteDirection()
+    {
+        if (direction is null) return;
+
+        using var context = DbFactory.CreateDbContext();
+        var directionFromDb = await context.Directions.FindAsync(direction.DirectionId);
+        if (directionFromDb is null) return;
+
+        context.Directions.Remove(directionFromDb);
+        await context.SaveChangesAsync();
+
+        NavigationManager.NavigateTo("/directions");
+    }
+}

@@ -1,0 +1,45 @@
+﻿@page "/directions/details"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+
+<PageTitle>Детали направления</PageTitle>
+
+<h1>Детали направления</h1>
+
+@if (direction is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <div class="card shadow-sm border-0" style="max-width: 500px;">
+        <div class="card-body p-4">
+            <dl class="row">
+                <dt class="col-sm-3">ID:</dt>
+                <dd class="col-sm-9">@direction.DirectionId</dd>
+
+                <dt class="col-sm-3">Название:</dt>
+                <dd class="col-sm-9">@direction.DirectionName</dd>
+            </dl>
+
+            <div class="d-flex gap-2 mt-4">
+                <a href="/directions/edit?id=@direction.DirectionId" class="btn btn-warning px-4">✏️ Редактировать</a>
+                <a href="/directions" class="btn btn-secondary px-4">↩️ Назад</a>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    private Direction? direction;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        direction = await context.Directions.FindAsync((byte)Id);
+    }
+}

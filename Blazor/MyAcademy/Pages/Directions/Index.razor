@@ -1,0 +1,57 @@
+﻿@page "/directions"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+
+<PageTitle>Направления обучения</PageTitle>
+
+<h1>Направления обучения</h1>
+
+<p>
+    <a href="/directions/create" class="btn btn-primary">➕ Добавить направление</a>
+</p>
+
+@if (directions == null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else if (directions.Count == 0)
+{
+    <p>Направления не найдены.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var direction in directions)
+            {
+                <tr>
+                    <td>@direction.DirectionId</td>
+                    <td>@direction.DirectionName</td>
+                    <td>
+                        <a href="/directions/details?id=@direction.DirectionId">Details</a> |
+                        <a href="/directions/edit?id=@direction.DirectionId">Edit</a> |
+                        <a href="/directions/delete?id=@direction.DirectionId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Direction>? directions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        directions = await context.Directions.ToListAsync();
+    }
+}

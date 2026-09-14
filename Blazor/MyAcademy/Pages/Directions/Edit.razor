@@ -1,0 +1,69 @@
+﻿@page "/directions/edit"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Редактировать направление</PageTitle>
+
+<h1>Редактировать направление</h1>
+
+@if (direction is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <div class="card shadow-sm border-0" style="max-width: 500px;">
+        <div class="card-body p-4">
+            <EditForm Model="direction" OnValidSubmit="UpdateDirection" FormName="edit-direction" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">ID:</label>
+                    <input type="text" class="form-control" value="@direction.DirectionId" disabled />
+                </div>
+
+                <div class="mb-3">
+                    <label for="name" class="form-label fw-bold">Название:</label>
+                    <InputText id="name" @bind-Value="direction.DirectionName" class="form-control" />
+                    <ValidationMessage For="() => direction.DirectionName" class="text-danger" />
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary px-4">💾 Сохранить</button>
+                    <a href="/directions" class="btn btn-secondary px-4">❌ Отмена</a>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    private Direction? direction;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        direction = await context.Directions.FindAsync((byte)Id);
+        if (direction is null) NavigationManager.NavigateTo("/directions");
+    }
+
+    private async Task UpdateDirection()
+    {
+        if (direction is null) return;
+
+        using var context = DbFactory.CreateDbContext();
+        var directionFromDb = await context.Directions.FindAsync(direction.DirectionId);
+        if (directionFromDb is null) return;
+
+        directionFromDb.DirectionName = direction.DirectionName;
+        await context.SaveChangesAsync();
+
+        NavigationManager.NavigateTo("/directions");
+    }
+}

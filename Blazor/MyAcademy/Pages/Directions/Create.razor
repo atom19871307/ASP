@@ -1,0 +1,41 @@
+﻿@page "/directions/create"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Создать направление</PageTitle>
+
+<h1>Создать направление</h1>
+
+<div class="card shadow-sm border-0" style="max-width: 500px;">
+    <div class="card-body p-4">
+        <EditForm Model="direction" OnValidSubmit="CreateDirection" FormName="create-direction" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+
+            <div class="mb-3">
+                <label for="name" class="form-label fw-bold">Название:</label>
+                <InputText id="name" @bind-Value="direction.DirectionName" class="form-control" placeholder="Введите название" />
+                <ValidationMessage For="() => direction.DirectionName" class="text-danger" />
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary px-4">💾 Сохранить</button>
+                <a href="/directions" class="btn btn-secondary px-4">❌ Отмена</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private Direction direction = new();
+
+    private async Task CreateDirection()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Directions.Add(direction);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/directions");
+    }
+}

@@ -1,0 +1,83 @@
+﻿@page "/students/create"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Создать студента</PageTitle>
+
+<h1>Создать студента</h1>
+
+<div class="card shadow-sm border-0" style="max-width: 600px;">
+    <div class="card-body p-4">
+        <EditForm Model="student" OnValidSubmit="CreateStudent" FormName="create-student" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+
+            <div class="mb-3">
+                <label for="lastName" class="form-label fw-bold">Фамилия:</label>
+                <InputText id="lastName" @bind-Value="student.LastName" class="form-control" maxlength="50" />
+            </div>
+
+            <div class="mb-3">
+                <label for="firstName" class="form-label fw-bold">Имя:</label>
+                <InputText id="firstName" @bind-Value="student.FirstName" class="form-control" maxlength="50" />
+            </div>
+
+            <div class="mb-3">
+                <label for="middleName" class="form-label fw-bold">Отчество:</label>
+                <InputText id="middleName" @bind-Value="student.MiddleName" class="form-control" maxlength="50" />
+            </div>
+
+            <div class="mb-3">
+                <label for="birthDate" class="form-label fw-bold">Дата рождения:</label>
+                <InputDate id="birthDate" @bind-Value="student.BirthDate" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label fw-bold">Email:</label>
+                <InputText id="email" @bind-Value="student.Email" class="form-control" maxlength="50" />
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label fw-bold">Телефон:</label>
+                <InputText id="phone" @bind-Value="student.Phone" class="form-control" maxlength="16" />
+            </div>
+
+            <div class="mb-3">
+                <label for="group" class="form-label fw-bold">Группа:</label>
+                <InputSelect id="group" @bind-Value="student.GroupId" class="form-select">
+                    <option value="">-- Выберите группу --</option>
+                    @foreach (var grp in groups)
+                    {
+                        <option value="@grp.GroupId">@grp.GroupName</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary px-4">💾 Сохранить</button>
+                <a href="/students" class="btn btn-secondary px-4">❌ Отмена</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private Student student = new();
+    private List<Group> groups = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        groups = await context.Groups.ToListAsync();
+    }
+
+    private async Task CreateStudent()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Students.Add(student);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/students");
+    }
+}

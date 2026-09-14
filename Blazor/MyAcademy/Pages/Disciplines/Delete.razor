@@ -1,0 +1,66 @@
+﻿@page "/disciplines/delete"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Удалить дисциплину</PageTitle>
+
+<h1>Удалить дисциплину</h1>
+
+@if (discipline is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <div class="card shadow-sm border-0" style="max-width: 500px;">
+        <div class="card-body p-4">
+            <h3>Вы уверены, что хотите удалить эту дисциплину?</h3>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-3">ID:</dt>
+                <dd class="col-sm-9">@discipline.DisciplineId</dd>
+
+                <dt class="col-sm-3">Название:</dt>
+                <dd class="col-sm-9">@discipline.DisciplineName</dd>
+
+                <dt class="col-sm-3">Кол-во занятий:</dt>
+                <dd class="col-sm-9">@discipline.NumberOfLessons</dd>
+            </dl>
+
+            <div class="d-flex gap-2 mt-4">
+                <button class="btn btn-danger px-4" @onclick="DeleteDiscipline">🗑️ Удалить</button>
+                <a href="/disciplines" class="btn btn-secondary px-4">❌ Отмена</a>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    private Discipline? discipline;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        discipline = await context.Disciplines.FindAsync((short)Id);
+        if (discipline is null) NavigationManager.NavigateTo("/disciplines");
+    }
+
+    private async Task DeleteDiscipline()
+    {
+        if (discipline is null) return;
+
+        using var context = DbFactory.CreateDbContext();
+        var disciplineFromDb = await context.Disciplines.FindAsync(discipline.DisciplineId);
+        if (disciplineFromDb is null) return;
+
+        context.Disciplines.Remove(disciplineFromDb);
+        await context.SaveChangesAsync();
+
+        NavigationManager.NavigateTo("/disciplines");
+    }
+}

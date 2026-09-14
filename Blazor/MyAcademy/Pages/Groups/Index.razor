@@ -1,0 +1,67 @@
+﻿@page "/groups"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+
+<PageTitle>Группы</PageTitle>
+
+<h1>Группы</h1>
+
+<p>
+    <a href="/groups/create" class="btn btn-primary">➕ Добавить группу</a>
+</p>
+
+@if (groups == null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else if (groups.Count == 0)
+{
+    <p>Группы не найдены.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Направление</th>
+                <th>Дата начала</th>
+                <th>Время начала</th>
+                <th>Дней обучения</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var group in groups)
+            {
+                <tr>
+                    <td>@group.GroupId</td>
+                    <td>@group.GroupName</td>
+                    <td>@group.Direction?.DirectionName</td>
+                    <td>@group.StartDate</td>
+                    <td>@group.StartTime</td>
+                    <td>@group.LearningDays</td>
+                    <td>
+                        <a href="/groups/details?id=@group.GroupId">Details</a> |
+                        <a href="/groups/edit?id=@group.GroupId">Edit</a> |
+                        <a href="/groups/delete?id=@group.GroupId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Group>? groups;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        groups = await context.Groups
+            .Include(g => g.Direction)
+            .ToListAsync();
+    }
+}

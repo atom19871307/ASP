@@ -1,0 +1,51 @@
+﻿@page "/disciplines/create"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Создать дисциплину</PageTitle>
+
+<h1>Создать дисциплину</h1>
+
+<div class="card shadow-sm border-0" style="max-width: 500px;">
+    <div class="card-body p-4">
+        <EditForm Model="discipline" OnValidSubmit="CreateDiscipline" FormName="create-discipline" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+
+            <div class="mb-3">
+                <label for="name" class="form-label fw-bold">Название:</label>
+                <InputText id="name" @bind-Value="discipline.DisciplineName" class="form-control" placeholder="Введите название дисциплины" />
+                <ValidationMessage For="() => discipline.DisciplineName" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="lessons" class="form-label fw-bold">Количество занятий:</label>
+                <input type="number" id="lessons" @bind="numberOfLessons" class="form-control" min="0" max="255" />
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary px-4">💾 Сохранить</button>
+                <a href="/disciplines" class="btn btn-secondary px-4">❌ Отмена</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private Discipline discipline = new();
+    private int numberOfLessons = 0;
+
+    private async Task CreateDiscipline()
+    {
+        discipline.NumberOfLessons = numberOfLessons >= 0 && numberOfLessons <= 255
+            ? (byte)numberOfLessons
+            : null;
+
+        using var context = DbFactory.CreateDbContext();
+        context.Disciplines.Add(discipline);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/disciplines");
+    }
+}

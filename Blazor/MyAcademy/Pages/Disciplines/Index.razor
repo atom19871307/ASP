@@ -1,0 +1,59 @@
+﻿@page "/disciplines"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+
+<PageTitle>Дисциплины</PageTitle>
+
+<h1>Дисциплины</h1>
+
+<p>
+    <a href="/disciplines/create" class="btn btn-primary">➕ Добавить дисциплину</a>
+</p>
+
+@if (disciplines == null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else if (disciplines.Count == 0)
+{
+    <p>Дисциплины не найдены.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Кол-во занятий</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var discipline in disciplines)
+            {
+                <tr>
+                    <td>@discipline.DisciplineId</td>
+                    <td>@discipline.DisciplineName</td>
+                    <td>@discipline.NumberOfLessons</td>
+                    <td>
+                        <a href="/disciplines/details?id=@discipline.DisciplineId">Details</a> |
+                        <a href="/disciplines/edit?id=@discipline.DisciplineId">Edit</a> |
+                        <a href="/disciplines/delete?id=@discipline.DisciplineId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Discipline>? disciplines;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        disciplines = await context.Disciplines.ToListAsync();
+    }
+}

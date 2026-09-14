@@ -1,0 +1,78 @@
+﻿@page "/groups/create"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Создать группу</PageTitle>
+
+<h1>Создать группу</h1>
+
+<div class="card shadow-sm border-0" style="max-width: 600px;">
+    <div class="card-body p-4">
+        <EditForm Model="group" OnValidSubmit="CreateGroup" FormName="create-group" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+
+            <div class="mb-3">
+                <label for="name" class="form-label fw-bold">Название:</label>
+                <InputText id="name" @bind-Value="group.GroupName" class="form-control" maxlength="10" placeholder="Например: П-21" />
+                <ValidationMessage For="() => group.GroupName" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="direction" class="form-label fw-bold">Направление:</label>
+                <InputSelect id="direction" @bind-Value="group.DirectionId" class="form-select">
+                    <option value="">-- Выберите направление --</option>
+                    @foreach (var dir in directions)
+                    {
+                        <option value="@dir.DirectionId">@dir.DirectionName</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="mb-3">
+                <label for="startDate" class="form-label fw-bold">Дата начала:</label>
+                <InputDate id="startDate" @bind-Value="group.StartDate" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="startTime" class="form-label fw-bold">Время начала:</label>
+                <InputDate id="startTime" @bind-Value="group.StartTime" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="learningDays" class="form-label fw-bold">Дней обучения:</label>
+                <input type="number" id="learningDays" @bind="learningDays" class="form-control" min="0" max="255" />
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary px-4">💾 Сохранить</button>
+                <a href="/groups" class="btn btn-secondary px-4">❌ Отмена</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private Group group = new();
+    private List<Direction> directions = new();
+    private int learningDays;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        directions = await context.Directions.ToListAsync();
+    }
+
+    private async Task CreateGroup()
+    {
+        if (learningDays >= 0 && learningDays <= 255)
+            group.LearningDays = (byte)learningDays;
+
+        using var context = DbFactory.CreateDbContext();
+        context.Groups.Add(group);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/groups");
+    }
+}

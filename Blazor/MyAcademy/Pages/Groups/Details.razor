@@ -1,0 +1,59 @@
+﻿@page "/groups/details"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+
+<PageTitle>Детали группы</PageTitle>
+
+<h1>Детали группы</h1>
+
+@if (group is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <div class="card shadow-sm border-0" style="max-width: 600px;">
+        <div class="card-body p-4">
+            <dl class="row">
+                <dt class="col-sm-4">ID:</dt>
+                <dd class="col-sm-8">@group.GroupId</dd>
+
+                <dt class="col-sm-4">Название:</dt>
+                <dd class="col-sm-8">@group.GroupName</dd>
+
+                <dt class="col-sm-4">Направление:</dt>
+                <dd class="col-sm-8">@group.Direction?.DirectionName</dd>
+
+                <dt class="col-sm-4">Дата начала:</dt>
+                <dd class="col-sm-8">@group.StartDate</dd>
+
+                <dt class="col-sm-4">Время начала:</dt>
+                <dd class="col-sm-8">@group.StartTime</dd>
+
+                <dt class="col-sm-4">Дней обучения:</dt>
+                <dd class="col-sm-8">@group.LearningDays</dd>
+            </dl>
+
+            <div class="d-flex gap-2 mt-4">
+                <a href="/groups/edit?id=@group.GroupId" class="btn btn-warning px-4">✏️ Редактировать</a>
+                <a href="/groups" class="btn btn-secondary px-4">↩️ Назад</a>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    private Group? group;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        group = await context.Groups
+            .Include(g => g.Direction)
+            .FirstOrDefaultAsync(g => g.GroupId == Id);
+    }
+}

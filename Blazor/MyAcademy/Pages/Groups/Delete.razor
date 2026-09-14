@@ -1,0 +1,78 @@
+﻿@page "/groups/delete"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Удалить группу</PageTitle>
+
+<h1>Удалить группу</h1>
+
+@if (group is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <div class="card shadow-sm border-0" style="max-width: 600px;">
+        <div class="card-body p-4">
+            <h3>Вы уверены, что хотите удалить эту группу?</h3>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-4">ID:</dt>
+                <dd class="col-sm-8">@group.GroupId</dd>
+
+                <dt class="col-sm-4">Название:</dt>
+                <dd class="col-sm-8">@group.GroupName</dd>
+
+                <dt class="col-sm-4">Направление:</dt>
+                <dd class="col-sm-8">@group.Direction?.DirectionName</dd>
+
+                <dt class="col-sm-4">Дата начала:</dt>
+                <dd class="col-sm-8">@group.StartDate</dd>
+
+                <dt class="col-sm-4">Время начала:</dt>
+                <dd class="col-sm-8">@group.StartTime</dd>
+
+                <dt class="col-sm-4">Дней обучения:</dt>
+                <dd class="col-sm-8">@group.LearningDays</dd>
+            </dl>
+
+            <div class="d-flex gap-2 mt-4">
+                <button class="btn btn-danger px-4" @onclick="DeleteGroup">🗑️ Удалить</button>
+                <a href="/groups" class="btn btn-secondary px-4">❌ Отмена</a>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    private Group? group;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        group = await context.Groups
+            .Include(g => g.Direction)
+            .FirstOrDefaultAsync(g => g.GroupId == Id);
+
+        if (group is null) NavigationManager.NavigateTo("/groups");
+    }
+
+    private async Task DeleteGroup()
+    {
+        if (group is null) return;
+
+        using var context = DbFactory.CreateDbContext();
+        var groupFromDb = await context.Groups.FindAsync(group.GroupId);
+        if (groupFromDb is null) return;
+
+        context.Groups.Remove(groupFromDb);
+        await context.SaveChangesAsync();
+
+        NavigationManager.NavigateTo("/groups");
+    }
+}

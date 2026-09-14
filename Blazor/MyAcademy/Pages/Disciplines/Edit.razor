@@ -1,0 +1,79 @@
+﻿@page "/disciplines/edit"
+@using Microsoft.EntityFrameworkCore
+@using MyAcademy.Models
+@inject IDbContextFactory<MyAcademyContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Редактировать дисциплину</PageTitle>
+
+<h1>Редактировать дисциплину</h1>
+
+@if (discipline is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <div class="card shadow-sm border-0" style="max-width: 500px;">
+        <div class="card-body p-4">
+            <EditForm Model="discipline" OnValidSubmit="UpdateDiscipline" FormName="edit-discipline" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" role="alert" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">ID:</label>
+                    <input type="text" class="form-control" value="@discipline.DisciplineId" disabled />
+                </div>
+
+                <div class="mb-3">
+                    <label for="name" class="form-label fw-bold">Название:</label>
+                    <InputText id="name" @bind-Value="discipline.DisciplineName" class="form-control" />
+                    <ValidationMessage For="() => discipline.DisciplineName" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="lessons" class="form-label fw-bold">Количество занятий:</label>
+                    <input type="number" id="lessons" @bind="numberOfLessons" class="form-control" min="0" max="255" />
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary px-4">💾 Сохранить</button>
+                    <a href="/disciplines" class="btn btn-secondary px-4">❌ Отмена</a>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    private Discipline? discipline;
+    private int numberOfLessons;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        discipline = await context.Disciplines.FindAsync((short)Id);
+        if (discipline is null) NavigationManager.NavigateTo("/disciplines");
+        else numberOfLessons = discipline.NumberOfLessons ?? 0;
+    }
+
+    private async Task UpdateDiscipline()
+    {
+        if (discipline is null) return;
+
+        using var context = DbFactory.CreateDbContext();
+        var disciplineFromDb = await context.Disciplines.FindAsync(discipline.DisciplineId);
+        if (disciplineFromDb is null) return;
+
+        disciplineFromDb.DisciplineName = discipline.DisciplineName;
+        disciplineFromDb.NumberOfLessons = numberOfLessons >= 0 && numberOfLessons <= 255
+            ? (byte)numberOfLessons
+            : null;
+
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/disciplines");
+    }
+}
