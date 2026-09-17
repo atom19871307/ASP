@@ -15,6 +15,7 @@
 </p>
 
 <QuickGrid Class="table" Items="context.Directions">
+    <PropertyColumn Property="direction => direction.direction_id" />
     <PropertyColumn Property="direction => direction.direction_name" />
 
     <TemplateColumn Context="direction">
