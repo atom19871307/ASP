@@ -1,0 +1,12 @@
+﻿::deep .direction-id 
+{
+    width:10%;
+}
+::deep .direction-name 
+{
+    width: 70%;
+}
+::deep .table
+{
+    height:38vh;
+}
