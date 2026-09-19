@@ -16,11 +16,11 @@ namespace Academy.Models
         [Column(TypeName = "TINYINT")]
         [ForeignKey(nameof(Direction))]
         public int direction { get; set; }
-        public DateOnly start_date { get; set; }
-        public TimeOnly start_time { get; set; }
+        public DateOnly? start_date { get; set; }
+        public TimeOnly? start_time { get; set; }
 
         [Column(TypeName = "TINYINT")]
-        public int learning_days { get; set; }
+        public int? learning_days { get; set; }
 
         //Navigation proprties;
         public Direction Direction { get; set; }
