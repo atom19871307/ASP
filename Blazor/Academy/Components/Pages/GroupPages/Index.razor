@@ -1,4 +1,6 @@
 @page "/groups"
+@rendermode InteractiveServer
+
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 @using Academy.Models
@@ -6,29 +8,46 @@
 @inject IDbContextFactory<AcademyContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Groups</PageTitle>
 
-<h1>Index</h1>
+<h1>Группы</h1>
 
+<div class="controls">
+    <p>
+        <a href="group/create" class="btn btn-primary">Добавить</a>
+    </p>
+    <div>
+        <lable for="items-per-page">Items per page</lable>
+        <select @bind="pagination.ItemsPerPage" id="items-per-page">
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="8">8</option>
+            <option value="10">10</option>
+        </select>
+    </div>
+</div>
 <p>
     <a href="groups/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="context.Groups">
-    <PropertyColumn Property="group => group.group_name" />
-    <PropertyColumn Property="group => group.direction" />
-    <PropertyColumn Property="group => group.start_date" />
-    <PropertyColumn Property="group => group.start_time" />
-    <PropertyColumn Property="group => group.learning_days" />
-    <PropertyColumn Property="group => group.Direction" />
+<div>
+    <QuickGrid Class="table" Items="context.Groups" Pagination="pagination">
+        <PropertyColumn Property="group => group.group_name" />
+        <PropertyColumn Property="group => group.direction" />
+        <PropertyColumn Property="group => group.start_date" />
+        <PropertyColumn Property="group => group.start_time" />
+        <PropertyColumn Property="group => group.learning_days" />
+        <PropertyColumn Property="group => group.Direction" />
 
-    <TemplateColumn Context="group">
-        <a href="@($"groups/details?group_id={group.group_id}")">Details</a> |
-    </TemplateColumn>
-</QuickGrid>
-
+        <TemplateColumn Context="group">
+            <a href="@($"groups/details?group_id={group.group_id}")">Details</a> |
+        </TemplateColumn>
+    </QuickGrid>
+    <Paginator State="pagination" />
+</div>
 @code {
     private AcademyContext context = default!;
+    PaginationState pagination = new PaginationState { ItemsPerPage = 5 };
 
     protected override void OnInitialized()
     {
