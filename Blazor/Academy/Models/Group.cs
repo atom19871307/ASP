@@ -8,6 +8,14 @@ namespace Academy.Models
     {
         [Key]
         public int group_id { get; set; }
+
+        /////////////////////////////////////////////////////////////////////////////////
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
+        ////////////////////////////////////////////////////////////////////////////////
+        
+
         [Required]
         [StringLength(10,MinimumLength = 4)]
         public string group_name { get; set; }

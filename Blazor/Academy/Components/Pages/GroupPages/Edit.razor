@@ -50,9 +50,17 @@ else
                 </div>
 
                 <div class="mb-3">
+                    @***************************************************************************************@
                     <label for="start_time" class="form-label">start_time:</label>
+                    <input type="time" id="start_time" value="@Group.start_time" @onchange="OnStartTimeChanged" class="form-control" />
+                    <ValidationMessage For="() => Group.start_time" class="text-danger" />
+
+                    @* <label for="start_time" class="form-label">start_time:</label>
                     <label id="start_time"@bind-="Group.start_time" class="form-control"></label>
-                    <input type="time" id="start_time" @bind="Group.start_time" class="form-control" />     
+                    <input type="time" id="start_time" @bind="Group.start_time" class="form-control" />   *@   
+
+                   @***************************************************************************************@
+
 
 
                         <ValidationMessage For="() => Group.start_time" class="text-danger" />
@@ -62,6 +70,7 @@ else
                     <InputNumber id="learning_days" @bind-Value="Group.learning_days" class="form-control" />
                     <ValidationMessage For="() => Group.learning_days" class="text-danger" />
                 </div>
+                <LearningDays />
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
         </div>
@@ -89,6 +98,19 @@ else
             NavigationManager.NavigateTo("notfound");
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void OnStartTimeChanged(ChangeEventArgs e)
+    {
+        if (TimeOnly.TryParse(e.Value?.ToString(), out var time))
+        {
+            Group.start_time = time;
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    
 
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
