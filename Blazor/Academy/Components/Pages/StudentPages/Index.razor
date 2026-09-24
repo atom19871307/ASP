@@ -50,7 +50,8 @@
 	</TemplateColumn> *@
 </QuickGrid>
 
-@code {
+@code 
+{
 	private AcademyContext context = default!;
 	IQueryable<Student> students = default!;
 	GridSort<Student> sortBy = GridSort<Student>.ByAscending(s => s.last_name)
