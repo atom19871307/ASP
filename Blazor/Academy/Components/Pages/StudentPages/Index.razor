@@ -71,6 +71,7 @@
 	}
 
 	public async ValueTask DisposeAsync() => await context.DisposeAsync();
+
 	IQueryable<Academy.Models.Student> FilteredStudents =>
 	context.Students
 			.Include(s => s.Group)
