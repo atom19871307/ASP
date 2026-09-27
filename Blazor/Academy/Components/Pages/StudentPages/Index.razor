@@ -17,7 +17,8 @@
 	</p>
 </div>
 
-<QuickGrid Class="table" Items="context.Students.Include(s => s.Group).ThenInclude(g => g.Direction)">
+@* <QuickGrid Class="table" Items="context.Students.Include(s => s.Group).ThenInclude(g => g.Direction)"> *@
+<QuickGrid Class="table" Items="FilteredStudents">
 	@* <PropertyColumn Property="student => student.last_name" />
 	<PropertyColumn Property="student => student.first_name" />
 	<PropertyColumn Property="student => student.middle_name" /> *@
@@ -50,15 +51,19 @@
 	</TemplateColumn> *@
 </QuickGrid>
 
-@code 
+@code
 {
 	private AcademyContext context = default!;
 	IQueryable<Student> students = default!;
 	GridSort<Student> sortBy = GridSort<Student>.ByAscending(s => s.last_name)
 												//.ThenAscending(s => s.first_name)
-												;
 												//ASC  - Ascending	(в порядке возрастания)
 												//DESC - Descending (в порядке убывания)
+												;
+
+	[SupplyParameterFromQuery]
+	string? Filter { get;set;}
+
 	protected override void OnInitialized()
 	{
 		context = DbFactory.CreateDbContext();
@@ -66,4 +71,11 @@
 	}
 
 	public async ValueTask DisposeAsync() => await context.DisposeAsync();
+	IQueryable<Academy.Models.Student> FilteredStudents =>
+	context.Students
+			.Include(s => s.Group)
+			.ThenInclude(g => g.Direction)
+			.AsEnumerable()
+			.Where(s => s.FullName.Contains(Filter ?? string.Empty))
+			.AsQueryable();
 }
