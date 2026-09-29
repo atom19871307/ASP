@@ -1,4 +1,5 @@
 ﻿@page "/students/edit"
+@rendermode InteractiveServer
 @using Microsoft.EntityFrameworkCore
 @using Academy.Models
 @inject IDbContextFactory<AcademyContext> DbFactory
@@ -67,7 +68,7 @@ else
                             <ValidationMessage For="() => Student.phone" class="text-danger" />
                         </div>
                     </div>
-                    <Photo Human="@Student" />
+                    <Photo Human="@Student" AllowChange = "true" />
                 </div>
                 @* <div class="mb-3">
                     <label for="photo" class="form-label">photo:</label>
@@ -126,7 +127,7 @@ else
             }
         }
 
-        NavigationManager.NavigateTo("/students");
+        NavigationManager.NavigateTo($"/students/details?stud_id={Student.stud_id}");
     }
 
     private bool StudentExists(int stud_id)

@@ -6,11 +6,26 @@
 }
 .human-text-fields
 {
-    width:38%;
+    width:55%;
     margin-right:5%;
 }
-
-.photo-area > img
+photo-area 
+{
+    width: 50%;
+    text-align: center;
+}
+    photo-area > div 
+    {
+        width: 90%;
+        height: 90%;
+        border: solid 1px;
+    }
+    photo-area img 
+    {
+        width: 100%;
+        height: 100%;
+    }
+choose-photo 
 {
     width: 90%;
 }
