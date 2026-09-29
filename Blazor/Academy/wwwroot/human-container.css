@@ -1,8 +1,16 @@
-﻿﻿.human-container {
+﻿.human-container 
+{
+    width:100%;
     display: flex;
     justify-content: space-between;
 }
+.human-text-fields
+{
+    width:38%;
+    margin-right:5%;
+}
 
-.photo-area > img {
+.photo-area > img
+{
     width: 90%;
 }
