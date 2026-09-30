@@ -1,6 +1,10 @@
 ﻿@page "/students/create"
 @using Microsoft.EntityFrameworkCore
 @using Academy.Models
+
+@using Academy.Components.Pages.StudentPages
+
+
 @inject IDbContextFactory<AcademyContext> DbFactory
 @inject NavigationManager  NavigationManager
 
@@ -54,11 +58,20 @@
                 <InputText id="phone" @bind-Value="Student.phone" class="form-control" /> 
                 <ValidationMessage For="() => Student.phone" class="text-danger" /> 
             </div>        
-            @* <div class="mb-3">
+           @*  <div class="mb-3">
                 <label for="photo" class="form-label">photo:</label> 
                 <InputText id="photo" @bind-Value="Student.photo" class="form-control" /> 
                 <ValidationMessage For="() => Student.photo" class="text-danger" /> 
-            </div>  *@       
+            </div>       
+             *@
+              @* ✅ Ներդրված Photo կոմպոնենտը *@
+            @* ******************************************************************************************************** *@
+            <div class="mb-3">
+                <Photo Human="Student" AllowChange="true" />
+            </div>
+
+            @* ******************************************************************************************************** *@
+
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
     </div>
