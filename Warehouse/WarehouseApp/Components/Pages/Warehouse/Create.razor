@@ -1,0 +1,82 @@
+﻿@page "/warehouse/products/create"
+@using Microsoft.EntityFrameworkCore
+@using WarehouseApp.Data
+@using WarehouseApp.Models
+@inject IDbContextFactory<WarehouseContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Ավելացնել ապրանք</PageTitle>
+
+<h1>Ավելացնել ապրանք</h1>
+
+<div class="card shadow-sm border-0" style="max-width: 600px;">
+    <div class="card-body p-4">
+        <EditForm method="post" Model="product" OnValidSubmit="AddProduct" FormName="create-product" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+
+            <div class="mb-3">
+                <label for="article" class="form-label fw-bold">Հոդված:</label>
+                <InputText id="article" @bind-Value="product.Article" class="form-control" maxlength="20" />
+            </div>
+
+            <div class="mb-3">
+                <label for="name" class="form-label fw-bold">Անվանում:</label>
+                <InputText id="name" @bind-Value="product.Name" class="form-control" maxlength="200" />
+                <ValidationMessage For="() => product.Name" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="category" class="form-label fw-bold">Կատեգորիա:</label>
+                <InputText id="category" @bind-Value="product.Category" class="form-control" maxlength="100" />
+            </div>
+
+            <div class="mb-3">
+                <label for="packaging" class="form-label fw-bold">Փաթեթավորում:</label>
+                <InputText id="packaging" @bind-Value="product.Packaging" class="form-control" maxlength="50" />
+            </div>
+
+            <div class="mb-3">
+                <label for="unit" class="form-label fw-bold">Չափման միավոր:</label>
+                <InputText id="unit" @bind-Value="product.Unit" class="form-control" maxlength="20" />
+            </div>
+
+            <div class="mb-3">
+                <label for="price" class="form-label fw-bold">Գին:</label>
+                <InputNumber id="price" @bind-Value="product.Price" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="shelfLifeDays" class="form-label fw-bold">Պահպանման ժամկետ (օրեր):</label>
+                <InputNumber id="shelfLifeDays" @bind-Value="product.ShelfLifeDays" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="quantityInStock" class="form-label fw-bold">Մնացորդ:</label>
+                <InputNumber id="quantityInStock" @bind-Value="product.QuantityInStock" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="expiryDate" class="form-label fw-bold">Պիտանելիության ամսաթիվ:</label>
+                <InputDate id="expiryDate" @bind-Value="product.ExpiryDate" class="form-control" />
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary px-4">💾 Պահպանել</button>
+                <a href="/warehouse/products" class="btn btn-secondary px-4">❌ Չեղարկել</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private Product product = new();
+
+    private async Task AddProduct()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Products.Add(product);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/warehouse/products");
+    }
+}

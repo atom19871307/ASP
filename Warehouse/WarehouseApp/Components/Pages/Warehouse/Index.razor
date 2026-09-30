@@ -1,0 +1,70 @@
+﻿@page "/warehouse/products"
+@using Microsoft.EntityFrameworkCore
+@using WarehouseApp.Data
+@using WarehouseApp.Models
+@inject IDbContextFactory<WarehouseContext> DbFactory
+
+<PageTitle>Ապրանքներ</PageTitle>
+
+<h1>Ապրանքների ցանկ</h1>
+
+<p>
+    <a href="/warehouse/products/create" class="btn btn-primary">➕ Ավելացնել ապրանք</a>
+</p>
+
+@if (products == null)
+{
+    <p><em>Բեռնվում է...</em></p>
+}
+else if (products.Count == 0)
+{
+    <p>Ապրանքներ չկան։</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Հոդված</th>
+                <th>Անվանում</th>
+                <th>Կատեգորիա</th>
+                <th>Փաթեթավորում</th>
+                <th>Գին</th>
+                <th>Մնացորդ</th>
+                <th>Պահպ. ժամկետ</th>
+                <th>Գործողություններ</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.Id</td>
+                    <td>@product.Article</td>
+                    <td>@product.Name</td>
+                    <td>@product.Category</td>
+                    <td>@product.Packaging</td>
+                    <td>@product.Price</td>
+                    <td>@product.QuantityInStock</td>
+                    <td>@product.ShelfLifeDays</td>
+                    <td>
+                        <a href="/warehouse/products/details?id=@product.Id">Մանրամասներ</a> |
+                        <a href="/warehouse/products/edit?id=@product.Id">Խմբագրել</a> |
+                        <a href="/warehouse/products/delete?id=@product.Id">Ջնջել</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Product>? products;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        products = await context.Products.ToListAsync();
+    }
+}
