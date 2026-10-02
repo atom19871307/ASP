@@ -1,138 +1,158 @@
 ﻿@page "/students/edit"
 @rendermode InteractiveServer
+
 @using Microsoft.EntityFrameworkCore
 @using Academy.Models
+
 @inject IDbContextFactory<AcademyContext> DbFactory
 @inject NavigationManager NavigationManager
 
 <PageTitle>Edit</PageTitle>
 
-<h1>Edit</h1>
+@* <h1>Edit</h1>
 
 <h2>Student</h2>
-<hr />
+<hr /> *@
 @if (Student is null)
 {
-    <p><em>Loading...</em></p>
+	<p><em>Loading...</em></p>
 }
 else
 {
-    <div class="row">
-        @* <div class="col-md-11"> *@
-        <div>
-            <EditForm method="post" Model="Student" OnValidSubmit="UpdateStudent" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary role="alert" />
+	<h1>@Student.FullName</h1>
+	<hr />
+	<div class="row">
+		@* <div class="col-md-10"> *@
+		<div>
+			<EditForm method="post" Model="Student" OnValidSubmit="UpdateStudent" FormName="edit" Enhance>
+				<DataAnnotationsValidator />
+				<ValidationSummary role="alert" />
 
-                <div class="human-container">
-                    <div class="human-text-fields">
-                        <input type="hidden" name="Student.stud_id" value="@Student.stud_id" />
-                        <div class="mb-3">
-                            <span class="text-danger">*</span>
-                            <label for="last_name" class="form-label">last_name:</label>
-                            <InputText id="last_name" @bind-Value="Student.last_name" class="form-control" aria-required="true" />
-                            <ValidationMessage For="() => Student.last_name" class="text-danger" />
-                        </div>
-                        <div class="mb-3">
-                            <span class="text-danger">*</span>
-                            <label for="first_name" class="form-label">first_name:</label>
-                            <InputText id="first_name" @bind-Value="Student.first_name" class="form-control" aria-required="true" />
-                            <ValidationMessage For="() => Student.first_name" class="text-danger" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="middle_name" class="form-label">middle_name:</label>
-                            <InputText id="middle_name" @bind-Value="Student.middle_name" class="form-control" />
-                            <ValidationMessage For="() => Student.middle_name" class="text-danger" />
-                        </div>
-                        <div class="mb-3">
+				<div class="human-container">
+					<div class="human-text-fields">
+						<input type="hidden" name="Student.stud_id" value="@Student.stud_id" />
+						@* <div class="mb-3">
+							<span class="text-danger">*</span>
+							<label for="group" class="form-label">group:</label>
+							<InputNumber id="group" @bind-Value="Student.group" class="form-control" aria-required="true" /> *@
+							<InputSelect id="group" @bind-Value="Student.group" class="form-control">
+								@using (AcademyContext context = DbFactory.CreateDbContext())
+								{
+									@foreach (Group group in context.Groups)
+									{
+										<option value="@group.group_id">@group.group_name</option>
+									}
+								}
+							</InputSelect>
+							@* <ValidationMessage For="() => Student.group" class="text-danger" />
+						</div> *@
 
-                            <div class="mb-3">
-                                <span class="text-danger">*</span>
-                                <label for="group" class="form-label">group:</label>
-                                <InputNumber id="group" @bind-Value="Student.group" class="form-control" aria-required="true" />
-                                <ValidationMessage For="() => Student.group" class="text-danger" />
-                            </div>
-                            <span class="text-danger">*</span>
-                            <label for="birth_date" class="form-label">birth_date:</label>
-                            <InputDate id="birth_date" @bind-Value="Student.birth_date" class="form-control" aria-required="true" />
-                            <ValidationMessage For="() => Student.birth_date" class="text-danger" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">email:</label>
-                            <InputText id="email" @bind-Value="Student.email" class="form-control" />
-                            <ValidationMessage For="() => Student.email" class="text-danger" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">phone:</label>
-                            <InputText id="phone" @bind-Value="Student.phone" class="form-control" />
-                            <ValidationMessage For="() => Student.phone" class="text-danger" />
-                        </div>
-                    </div>
-                    <Photo Human="@Student" AllowChange = "true" />
-                </div>
-                @* <div class="mb-3">
+						
+						<div class="mb-3">
+							<span class="text-danger">*</span>
+							<label for="last_name" class="form-label">last_name:</label>
+							<InputText id="last_name" @bind-Value="Student.last_name" class="form-control" aria-required="true" />
+							<ValidationMessage For="() => Student.last_name" class="text-danger" />
+						</div>
+						<div class="mb-3">
+							<span class="text-danger">*</span>
+							<label for="first_name" class="form-label">first_name:</label>
+							<InputText id="first_name" @bind-Value="Student.first_name" class="form-control" aria-required="true" />
+							<ValidationMessage For="() => Student.first_name" class="text-danger" />
+						</div>
+						<div class="mb-3">
+							<label for="middle_name" class="form-label">middle_name:</label>
+							<InputText id="middle_name" @bind-Value="Student.middle_name" class="form-control" />
+							<ValidationMessage For="() => Student.middle_name" class="text-danger" />
+						</div>
+						<div class="mb-3">
+							<span class="text-danger">*</span>
+							<label for="birth_date" class="form-label">birth_date:</label>
+							<InputDate id="birth_date" @bind-Value="Student.birth_date" class="form-control" aria-required="true" />
+							<ValidationMessage For="() => Student.birth_date" class="text-danger" />
+						</div>
+						<div class="mb-3">
+							<label for="email" class="form-label">email:</label>
+							<InputText id="email" @bind-Value="Student.email" class="form-control" />
+							<ValidationMessage For="() => Student.email" class="text-danger" />
+						</div>
+						<div class="mb-3">
+							<label for="phone" class="form-label">phone:</label>
+							<InputText id="phone" @bind-Value="Student.phone" class="form-control" />
+							<ValidationMessage For="() => Student.phone" class="text-danger" />
+						</div>
+
+						<CB_Groups Student="Student" />
+
+					</div>
+
+					<Photo Human="@Student" AllowChange=true />
+				</div>
+
+				@* 
+					<div class="mb-3">
                     <label for="photo" class="form-label">photo:</label>
                     <InputText id="photo" @bind-Value="Student.photo" class="form-control" />
                     <ValidationMessage For="() => Student.photo" class="text-danger" />
-                    </div> *@
-                <button type="submit" class="btn btn-primary">Save</button>
-
-            </EditForm>
-        </div>
-    </div>
+					</div>
+				*@
+				<button type="submit" class="btn btn-primary">Save</button>
+			</EditForm>
+		</div>
+	</div>
 }
 
 <div>
-    <a href="/students">Back to List</a>
+	<a href="/students">Back to List</a>
 </div>
 
 @code {
-    [SupplyParameterFromQuery]
-    private int stud_id { get; set; }
+	[SupplyParameterFromQuery]
+	private int stud_id { get; set; }
 
-    [SupplyParameterFromForm]
-    private Student? Student { get; set; }
+	[SupplyParameterFromForm]
+	private Student? Student { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        using var context = DbFactory.CreateDbContext();
-        Student ??= await context.Students.FirstOrDefaultAsync(m => m.stud_id == stud_id);
+	protected override async Task OnInitializedAsync()
+	{
+		using var context = DbFactory.CreateDbContext();
+		Student ??= await context.Students.FirstOrDefaultAsync(m => m.stud_id == stud_id);
 
-        if (Student is null)
-        {
-            NavigationManager.NavigateTo("notfound");
-        }
-    }
+		if (Student is null)
+		{
+			NavigationManager.NavigateTo("notfound");
+		}
+	}
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
-    private async Task UpdateStudent()
-    {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Student!).State = EntityState.Modified;
+	// To protect from overposting attacks, enable the specific properties you want to bind to.
+	// For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+	private async Task UpdateStudent()
+	{
+		using var context = DbFactory.CreateDbContext();
+		context.Attach(Student!).State = EntityState.Modified;
 
-        try
-        {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!StudentExists(Student!.stud_id))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
-        }
+		try
+		{
+			await context.SaveChangesAsync();
+		}
+		catch (DbUpdateConcurrencyException)
+		{
+			if (!StudentExists(Student!.stud_id))
+			{
+				NavigationManager.NavigateTo("notfound");
+			}
+			else
+			{
+				throw;
+			}
+		}
 
-        NavigationManager.NavigateTo($"/students/details?stud_id={Student.stud_id}");
-    }
+		NavigationManager.NavigateTo($"/students/details?stud_id={Student.stud_id}");
+	}
 
-    private bool StudentExists(int stud_id)
-    {
-        using var context = DbFactory.CreateDbContext();
-        return context.Students.Any(e => e.stud_id == stud_id);
-    }
+	private bool StudentExists(int stud_id)
+	{
+		using var context = DbFactory.CreateDbContext();
+		return context.Students.Any(e => e.stud_id == stud_id);
+	}
 }
