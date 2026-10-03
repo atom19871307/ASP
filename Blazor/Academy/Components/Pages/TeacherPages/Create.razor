@@ -8,10 +8,8 @@
 
 <PageTitle>Create</PageTitle>
 
-<h1>Create</h1>
+<h1>Create Teacher</h1>
 
-<h2>Teacher</h2>
-<hr />
 <div class="row">
     <div >
         <EditForm method="post" Model="Teacher" OnValidSubmit="AddTeacher" FormName="create" Enhance>
@@ -91,6 +89,6 @@
         using var context = DbFactory.CreateDbContext();
         context.Teachers.Add(Teacher);
         await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/teachers");
+        NavigationManager.NavigateTo($"/teachers/details?teacher_id={Teacher.teacher_id}");
     }
 }

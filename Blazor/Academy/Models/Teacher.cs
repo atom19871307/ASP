@@ -15,5 +15,8 @@ namespace Academy.Models
 
         [Column("rate", TypeName = "SMALLMONEY")]
         public int rate { get; set; }
+
+        //Navigation properties
+        public ICollection<TeachersDisciplinesRelation> TDR { get; set; }
     }
 }
