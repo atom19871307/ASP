@@ -1,26 +1,25 @@
-@page "/teachers/details"
+﻿@page "/teachers/details"
+
+@rendermode InteractiveServer
+
 @using Microsoft.EntityFrameworkCore
 @using Academy.Models
 @inject IDbContextFactory<AcademyContext> DbFactory
 @inject NavigationManager NavigationManager
 
-@* <PageTitle>Details</PageTitle>
-
-<h1>Details</h1> *@
-
 <div>
-	@* <h2>Teacher</h2>
-    <hr /> *@
-	@if (teacher is null)
-	{
-		<p><em>Loading...</em></p>
-	}
-	else {
-		<div class="controls">
-			<h1>@teacher.FullName</h1>
-			<a href="@($"/teachers/edit?teacher_id={teacher.teacher_id}")" class="btn btn-primary">Edit</a>
-		</div>
-		<hr />
+    @if (teacher is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <div class="controls">
+            <h1>@teacher.FullName</h1>
+            <a href="@($"/teachers/edit?teacher_id={teacher.teacher_id}")" class="btn btn-primary">Edit</a>
+        </div>
+        <hr />
+
         <div class="human-container">
             <dl class="human-text-fields">
                 <dt class="col-sm-2">last_name</dt>
@@ -35,8 +34,6 @@
                 <dd class="col-sm-10">@teacher.email</dd>
                 <dt class="col-sm-2">phone</dt>
                 <dd class="col-sm-10">@teacher.phone</dd>
-               @*  <dt class="col-sm-2">photo</dt>
-                <dd class="col-sm-10">@teacher.photo</dd> *@
                 <dt class="col-sm-2">work_since</dt>
                 <dd class="col-sm-10">@teacher.work_since</dd>
                 <dt class="col-sm-2">rate</dt>
@@ -44,36 +41,158 @@
             </dl>
             <Photo Human="teacher" />
         </div>
-        <div>
-            <a href="@($"/teachers")">Back to List</a>
+
+        @* ✅ ДИСЦИПЛИНЫ *@
+        <h3>Дисциплины</h3>
+
+        @if (teacher.TDR == null || teacher.TDR.Count == 0)
+        {
+            <p><em>Нет дисциплин</em></p>
+        }
+        else
+        {
+            <p>
+                <strong>Количество дисциплин:</strong> @teacher.TDR.Count
+            </p>
+
+            <ul class="list-group">
+                @foreach (var tdr in teacher.TDR)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>@tdr.Discipline?.discipline_name</span>
+                        <button class="btn btn-sm btn-danger" @onclick="() => RemoveDiscipline(tdr)">
+                             Удалить
+                        </button>
+                    </li>
+                }
+            </ul>
+        }
+
+        @*  ДОБАВЛЕНИЕ НОВОЙ ДИСЦИПЛИНЫ *@
+        <hr />
+        <h4>Добавить дисциплину</h4>
+
+        <div class="row">
+            <div class="col-md-8">
+                <select @bind="selectedDisciplineId" class="form-select">
+                    <option value="0">-- Выберите дисциплину --</option>
+                    @foreach (var disc in availableDisciplines)
+                    {
+                        <option value="@disc.discipline_id">@disc.discipline_name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-success w-100" @onclick="AddDiscipline">
+                     Добавить
+                </button>
+            </div>
         </div>
-        <h3>����������</h3>
-        <ul>
-    @foreach (TeachersDisciplinesRelation tdr in teacher.TDR)
-            {
-                <li>@tdr.Discipline.discipline_name</li>
-            }
-        </ul>
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="alert alert-info mt-3">@message</div>
+        }
+
+        <div class="mt-3">
+            <a href="/teachers">Back to List</a>
+        </div>
     }
 </div>
 
 @code {
     private Teacher? teacher;
+    private List<Discipline> availableDisciplines = new();
+    private short selectedDisciplineId = 0;
+    private string message = "";
 
     [SupplyParameterFromQuery]
     private int teacher_id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
         using var context = DbFactory.CreateDbContext();
+
+        //  Загружаем преподавателя со списком дисциплин.
         teacher = await context.Teachers
-                                .Include(t => t.TDR)
-                                .ThenInclude(tdr => tdr.Discipline)
-                                .FirstOrDefaultAsync(m => m.teacher_id == teacher_id);
+            .Include(t => t.TDR)
+                .ThenInclude(tdr => tdr.Discipline)
+            .FirstOrDefaultAsync(m => m.teacher_id == teacher_id);
 
         if (teacher is null)
         {
             NavigationManager.NavigateTo("notfound");
+            return;
         }
+
+        //  Загружаем все дисциплины, которых еще нет у преподавателя.
+        var assignedIds = teacher.TDR.Select(tdr => tdr.discipline).ToList();
+        availableDisciplines = await context.Disciplines
+            .Where(d => !assignedIds.Contains(d.discipline_id))
+            .OrderBy(d => d.discipline_name)
+            .ToListAsync();
+    }
+
+    //  Добавление дисциплины преподавателю.
+    private async Task AddDiscipline()
+    {
+        if (selectedDisciplineId == 0)
+        {
+            message = "Пожалуйста, выберите дисциплину.";
+            return;
+        }
+
+        using var context = DbFactory.CreateDbContext();
+
+        //  Проверяем, что такой связи еще нет.
+        var exists = await context.TeachersDisciplinesRelation
+            .AnyAsync(tdr => tdr.teacher == teacher_id && tdr.discipline == selectedDisciplineId);
+
+        if (exists)
+        {
+            message = "Эта дисциплина уже назначена.";
+            return;
+        }
+
+        //Создаем новую связь.
+        var newRelation = new TeachersDisciplinesRelation
+        {
+            teacher = (short)teacher_id,
+            discipline = selectedDisciplineId
+        };
+
+        context.TeachersDisciplinesRelation.Add(newRelation);
+        await context.SaveChangesAsync();
+
+        message = "Дисциплина успешно добавлена.";
+        selectedDisciplineId = 0;
+
+        //  Обновляем данные на странице.
+        await LoadData();
+    }
+
+    //  Удаление дисциплины у преподавателя.
+    private async Task RemoveDiscipline(TeachersDisciplinesRelation tdr)
+    {
+        using var context = DbFactory.CreateDbContext();
+
+        //  Ищем связь и удаляем.
+        var relation = await context.TeachersDisciplinesRelation
+            .FirstOrDefaultAsync(r => r.teacher == tdr.teacher && r.discipline == tdr.discipline);
+
+        if (relation is not null)
+        {
+            context.TeachersDisciplinesRelation.Remove(relation);
+            await context.SaveChangesAsync();
+            message = "Дисциплина удалена.";
+        }
+
+        // Обновляем данные.
+        await LoadData();
     }
 }

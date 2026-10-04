@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Academy.Models
 {
     [PrimaryKey(nameof(teacher), nameof(discipline))]
+    // Указываем точное имя таблицы в БД, чтобы EF Core не добавлял 's' в конце.
+    // Նշում ենք աղյուսակի ճշգրիտ անունը ԲԴ-ում, որպեսզի EF Core-ը վերջում 's' չավելացնի։
+    [Table("TeachersDisciplinesRelation")]
     public class TeachersDisciplinesRelation
     {
         

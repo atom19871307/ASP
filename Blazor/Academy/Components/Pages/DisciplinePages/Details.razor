@@ -1,0 +1,81 @@
+﻿@page "/disciplines/details"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using Academy.Models
+@inject IDbContextFactory<AcademyContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<h1>Детали дисциплины</h1>
+
+@if (discipline is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <div class="card shadow-sm border-0" style="max-width: 600px;">
+        <div class="card-body p-4">
+            <dl class="row">
+                <dt class="col-sm-4">ID:</dt>
+                <dd class="col-sm-8">@discipline.discipline_id</dd>
+
+                <dt class="col-sm-4">Название:</dt>
+                <dd class="col-sm-8">@discipline.discipline_name</dd>
+
+                <dt class="col-sm-4">Количество занятий:</dt>
+                <dd class="col-sm-8">@discipline.number_of_lessons</dd>
+            </dl>
+
+            @* ✅ УЧИТЕЛЯ, КОТОРЫЕ МОГУТ ВЕСТИ ЭТУ ДИСЦИПЛИНУ *@
+            <h3>Преподаватели</h3>
+
+            @if (discipline.TDR == null || discipline.TDR.Count == 0)
+            {
+                <p><em>Нет преподавателей</em></p>
+            }
+            else
+            {
+                <p>
+                    <strong>Количество преподавателей:</strong> @discipline.TDR.Count
+                </p>
+                <ul class="list-group">
+                    @foreach (var tdr in discipline.TDR)
+                    {
+                        <li class="list-group-item">
+                            @tdr.Teacher?.FullName
+                        </li>
+                    }
+                </ul>
+            }
+
+            <div class="d-flex gap-2 mt-4">
+                <a href="/disciplines/edit?id=@discipline.discipline_id" class="btn btn-warning">✏️ Редактировать</a>
+                <a href="/disciplines" class="btn btn-secondary">↩️ Назад</a>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    private short id { get; set; }
+
+    private Discipline? discipline;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+
+        // ✅ Загружаем дисциплину ВМЕСТЕ со списком преподавателей.
+        // ✅ Բեռնում ենք դիսցիպլինը ԴԱՍԱԽՈՍՆԵՐԻ ՑԱՆԿԻ ՀԵՏ ՄԻԱՍԻՆ։
+        discipline = await context.Disciplines
+            .Include(d => d.TDR)
+                .ThenInclude(tdr => tdr.Teacher)
+            .FirstOrDefaultAsync(d => d.discipline_id == id);
+
+        if (discipline is null)
+        {
+            NavigationManager.NavigateTo("/disciplines");
+        }
+    }
+}
