@@ -1,5 +1,6 @@
 ﻿@page "/disciplines/details"
 @rendermode InteractiveServer
+
 @using Microsoft.EntityFrameworkCore
 @using Academy.Models
 @inject IDbContextFactory<AcademyContext> DbFactory
@@ -58,7 +59,7 @@ else
 
 @code {
     [SupplyParameterFromQuery]
-    private short id { get; set; }
+    private int id { get; set; }
 
     private Discipline? discipline;
 
