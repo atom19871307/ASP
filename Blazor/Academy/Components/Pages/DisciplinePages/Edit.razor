@@ -1,0 +1,97 @@
+﻿@page "/disciplines/edit"
+@using Microsoft.EntityFrameworkCore
+@using Academy.Models
+@inject IDbContextFactory<AcademyContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+@if (discipline is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h1>@discipline.discipline_name</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="discipline" OnValidSubmit="UpdateDiscipline" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert" />
+                <input type="hidden" name="discipline.discipline_id" value="@discipline.discipline_id" />
+                <div class="mb-3">
+                    <span class="text-danger">*</span>
+                    <label for="discipline_name" class="form-label">discipline_name:</label>
+                    <InputText id="discipline_name" @bind-Value="discipline.discipline_name" class="form-control" aria-required="true" />
+                    <ValidationMessage For="() => discipline.discipline_name" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <span class="text-danger">*</span>
+                    <label for="number_of_lessons" class="form-label">number_of_lessons:</label>
+                    <InputNumber id="number_of_lessons" @bind-Value="discipline.number_of_lessons" class="form-control" aria-required="true" />
+                    <ValidationMessage For="() => discipline.number_of_lessons" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/disciplines">Back to List</a>
+</div>
+
+@code {
+    //  Պարզ փոփոխական (ոչ [SupplyParameterFromForm])
+    private Discipline? discipline;
+
+    [SupplyParameterFromQuery]
+    private int discipline_id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        //  Ավելացնում ենք .AsNoTracking() ցիկլը կանխելու համար
+        discipline = await context.Disciplines
+            .AsNoTracking()
+            .FirstOrDefaultAsync(m => m.discipline_id == discipline_id);
+
+        if (discipline is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task UpdateDiscipline()
+    {
+        if (discipline is null) return;
+
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(discipline).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!DisciplineExists(discipline.discipline_id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/disciplines");
+    }
+
+    private bool DisciplineExists(int discipline_id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Disciplines.Any(e => e.discipline_id == discipline_id);
+    }
+}

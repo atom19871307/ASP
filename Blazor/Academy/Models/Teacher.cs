@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -18,5 +19,6 @@ namespace Academy.Models
 
         //Navigation properties
         public ICollection<TeachersDisciplinesRelation> TDR { get; set; }
+        //public ObservableCollection<TeachersDisciplinesRelation> TDR { get; set; }
     }
 }

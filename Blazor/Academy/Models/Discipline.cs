@@ -21,5 +21,6 @@ namespace Academy.Models
 
         //Navigation properties
         public ICollection<TeachersDisciplinesRelation> TDR { get; set; }
+        //public ICollection<TeachersDisciplinesRelation> TDR { get; set; } = default!;
     }
 }
