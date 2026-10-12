@@ -12,4 +12,7 @@ public class Direction
     [Required]
     [StringLength(150, MinimumLength = 5)]
     public string direction_name { get; set; }
+
+    //Navigation properties:
+    ICollection<Group> Groups { get; set; }
 }
