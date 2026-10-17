@@ -4,19 +4,21 @@
 @{
 	ViewData["Title"] = "Students";
 }
-
-<h1>Students</h1>
-<form asp-action="Index" method="get">
-	<label>
-		Поиск по имени:
-		<input type="search" name="SearchString" value="@ViewData["CurrentFilter"]" />
-		<input type="submit" value="Поиск" class="btn btn-primary" />
-		<a asp-action="Index" class="btn btn-dark">Сброс</a>
-	</label>
+<div class="controls">
+	<h1>Students</h1>
+	<form asp-action="Index" method="get">
+		<label>
+			Поиск по имени:
+			<input type="search" name="SearchString" value="@ViewData["CurrentFilter"]" />
+			<input type="submit" value="Поиск" class="btn btn-primary" />
+			<a asp-action="Index" class="btn btn-dark">Сброс</a>
+		</label>
 </form>
-<p>
-	<a asp-action="Create">Create New</a>
-</p>
+
+<div>
+	<a asp-action="Create" class="btn btn-primary">Create New</a>
+</div>
+
 <div class="table-container">
 <table class="table">
 	<thead>
