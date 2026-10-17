@@ -75,6 +75,7 @@
 	string nextDisabled = Model.HasNextPage ? "" : "disabled";
 }
 
+<div class="pagination-controls">
 <a asp-action="Index"
    asp-route-pageIndex="@(Model.PageIndex - 1)"
    asp-route-searchString="@ViewData["CurrentFilter"]"
@@ -83,6 +84,15 @@
 	Prev
 </a>
 
+<div class="pagination-items"> 
+	@for(int i=1;i<=Model.TotalPages; i++)
+		{
+			<div class=@(i == Model.PageIndex ? "pagination-item" : "pagination - item")>
+				@i
+			</div>
+		}
+	</div>
+
 <a asp-action="Index"
    asp-route-pageIndex="@(Model.PageIndex + 1)"
    asp-route-searchString="@ViewData["CurrentFilter"]"
@@ -90,3 +100,4 @@
 >
 	Next
 </a>
+</div>
