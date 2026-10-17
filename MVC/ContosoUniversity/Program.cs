@@ -1,9 +1,11 @@
 using ContosoUniversity;
+using ContosoUniversity.Data;
 using Microsoft.EntityFrameworkCore;
-var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("ContosoUniversityContext") ?? throw new InvalidOperationException("Connection string 'ContosoUniversityContext' not found.");
+using Microsoft.Extensions.DependencyInjection;
 
-builder.Services.AddDbContext<ContosoUniversityContext>(options => options.UseSqlServer(connectionString));
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<ContosoUniversityContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ContosoUniversityContext") ?? throw new InvalidOperationException("Connection string 'ContosoUniversityContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -29,15 +31,16 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-CreatDbIfNotExists(app);
+CreateDbIfNotExists(app);
 
 app.Run();
 
-static void CreatDbIfNotExists(IHost host)
+static void CreateDbIfNotExists(IHost host)
 {
-    using (IServiceScope scope =  host.Services.CreateScope())
+    //Scope - область видимости
+    using (IServiceScope scope = host.Services.CreateScope())
     {
-       IServiceProvider provider =  scope.ServiceProvider;
+        IServiceProvider provider = scope.ServiceProvider;
         try
         {
             ContosoUniversityContext context = provider.GetRequiredService<ContosoUniversityContext>();
