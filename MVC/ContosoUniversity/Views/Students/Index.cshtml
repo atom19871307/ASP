@@ -17,6 +17,7 @@
 <p>
 	<a asp-action="Create">Create New</a>
 </p>
+<div class="table-container">
 <table class="table">
 	<thead>
 		<tr>
@@ -67,6 +68,7 @@
 		}
 	</tbody>
 </table>
+</div>
 
 @{
 	string prevDisabled = Model.HasPreviousPage ? "" : "disabled";
@@ -75,14 +77,16 @@
 
 <a asp-action="Index"
    asp-route-pageIndex="@(Model.PageIndex - 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @prevDisabled">
+   asp-route-searchString="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled"
+>
 	Prev
 </a>
 
 <a asp-action="Index"
    asp-route-pageIndex="@(Model.PageIndex + 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @nextDisabled">
+   asp-route-searchString="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled"
+>
 	Next
 </a>
