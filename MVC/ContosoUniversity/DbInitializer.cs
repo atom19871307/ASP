@@ -1,4 +1,4 @@
-﻿#define DB_INIT_1
+﻿#define DB_INIT_2
 
 #if DB_INIT_1
 using ContosoUniversity.Data;
@@ -83,8 +83,9 @@ namespace ContosoUniversity.Data
 	{
 		public static void Initialize(ContosoUniversityContext context)
 		{
-			// Look for any students.
-			if (context.Students.Any())
+            context.Database.EnsureCreated();
+            // Look for any students.
+            if (context.Students.Any())
 			{
 				return;   // DB has been seeded
 			}

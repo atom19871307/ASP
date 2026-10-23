@@ -1,25 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ContosoUniversity.Models
 {
-    public class Course
-    {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]   //Эта аннотация отключает автоинкремент
-        public int CourseID { get; set; }
-        public string Title { get; set; }
+	public class Course
+	{
+		[DatabaseGenerated(DatabaseGeneratedOption.None)]	//Эта аннотация отключает автоинкремент
+		public int CourseID { get; set; }
+		public string Title { get; set; }
 
-        [Range(0, 5)]
-        public int Credits { get; set; }
+		[Range(0,5)]
+		public int Credits { get; set; }
 
-        [ForeignKey(nameof(Department))]
-        public int DepartmentID { get; set; }
+		[ForeignKey(nameof(Department))]
+		public int DepartmentID { get; set; }
 
-        //Navigation properties:
-        public ICollection<Enrollment> Enrollments { get; set; }
-        public Department Department { get; set; }
-        public ICollection<CourseAssignment> CourseAssignments { get; set; }
+		//Navigation properties:
+		public ICollection<Enrollment> Enrollments { get; set; }
+		public Department Department { get; set; }
+		public ICollection<CourseAssignment> CourseAssignments { get; set; }
 
-        public List<Instructor> Instructors { get; set; } = default!;
-    }
+		public List<Instructor> Instructors { get; set; } = default!;
+	}
 }
