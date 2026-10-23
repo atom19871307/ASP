@@ -1,6 +1,11 @@
-﻿body 
+﻿.controls, .controls >  foem
 {
     display:flex;
     justify-content:space-between;
     align-items:center;
+}
+.controls  div
+{
+    margin-left:8px;
+    margin-right:8px;
 }

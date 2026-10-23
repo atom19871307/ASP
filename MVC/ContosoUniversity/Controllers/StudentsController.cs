@@ -26,6 +26,7 @@ namespace ContosoUniversity.Controllers
             string searchString,
             int? pageIndex,
             int itemsPerPage = 3
+
         )
         {
             ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
@@ -55,6 +56,7 @@ namespace ContosoUniversity.Controllers
                 default: students = students.OrderBy(s => s.LastName); break;
             }
 
+            ViewData["ItemsParPage"] = itemsPerPage;
             int pageSize = itemsPerPage;
             return View
             (
