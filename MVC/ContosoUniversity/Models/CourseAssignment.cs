@@ -12,7 +12,7 @@ namespace ContosoUniversity.Models
         //				Composite primary key
 
         //Navigation properties:
-        public Instructor Instructor { get; set; }
+        public Instructors Instructor { get; set; }
         public Course Course { get; set; }
     }
 }

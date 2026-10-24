@@ -2,6 +2,7 @@ using ContosoUniversity;
 using ContosoUniversity.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.ComponentModel.DataAnnotations.Schema;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ContosoUniversityContext>(options =>

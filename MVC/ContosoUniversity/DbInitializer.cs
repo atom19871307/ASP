@@ -161,42 +161,42 @@ namespace ContosoUniversity.Data
 			context.AddRange(students);
 			context.SaveChanges();
 
-			var abercrombie = new Instructor
+			var abercrombie = new Instructors
 			{
 				FirstName = "Kim",
 				LastName = "Abercrombie",
 				HireDate = DateTime.Parse("1995-03-11")
 			};
 
-			var fakhouri = new Instructor
+			var fakhouri = new Instructors
 			{
 				FirstName = "Fadi",
 				LastName = "Fakhouri",
 				HireDate = DateTime.Parse("2002-07-06")
 			};
 
-			var harui = new Instructor
+			var harui = new Instructors
 			{
 				FirstName = "Roger",
 				LastName = "Harui",
 				HireDate = DateTime.Parse("1998-07-01")
 			};
 
-			var kapoor = new Instructor
+			var kapoor = new Instructors
 			{
 				FirstName = "Candace",
 				LastName = "Kapoor",
 				HireDate = DateTime.Parse("2001-01-15")
 			};
 
-			var zheng = new Instructor
+			var zheng = new Instructors
 			{
 				FirstName = "Roger",
 				LastName = "Zheng",
 				HireDate = DateTime.Parse("2004-02-12")
 			};
 
-			var instructors = new Instructor[]
+			var instructors = new Instructors[]
 			{
 				abercrombie,
 				fakhouri,
@@ -273,7 +273,7 @@ namespace ContosoUniversity.Data
 				Title = "Chemistry",
 				Credits = 3,
 				Department = engineering,
-				Instructors = new List<Instructor> { kapoor, harui }
+				Instructors = new List<Instructors> { kapoor, harui }
 			};
 
 			var microeconomics = new Course
@@ -282,7 +282,7 @@ namespace ContosoUniversity.Data
 				Title = "Microeconomics",
 				Credits = 3,
 				Department = economics,
-				Instructors = new List<Instructor> { zheng }
+				Instructors = new List<Instructors> { zheng }
 			};
 
 			var macroeconmics = new Course
@@ -291,7 +291,7 @@ namespace ContosoUniversity.Data
 				Title = "Macroeconomics",
 				Credits = 3,
 				Department = economics,
-				Instructors = new List<Instructor> { zheng }
+				Instructors = new List<Instructors> { zheng }
 			};
 
 			var calculus = new Course
@@ -300,7 +300,7 @@ namespace ContosoUniversity.Data
 				Title = "Calculus",
 				Credits = 4,
 				Department = mathematics,
-				Instructors = new List<Instructor> { fakhouri }
+				Instructors = new List<Instructors> { fakhouri }
 			};
 
 			var trigonometry = new Course
@@ -309,7 +309,7 @@ namespace ContosoUniversity.Data
 				Title = "Trigonometry",
 				Credits = 4,
 				Department = mathematics,
-				Instructors = new List<Instructor> { harui }
+				Instructors = new List<Instructors> { harui }
 			};
 
 			var composition = new Course
@@ -318,7 +318,7 @@ namespace ContosoUniversity.Data
 				Title = "Composition",
 				Credits = 3,
 				Department = english,
-				Instructors = new List<Instructor> { abercrombie }
+				Instructors = new List<Instructors> { abercrombie }
 			};
 
 			var literature = new Course
@@ -327,7 +327,7 @@ namespace ContosoUniversity.Data
 				Title = "Literature",
 				Credits = 4,
 				Department = english,
-				Instructors = new List<Instructor> { abercrombie }
+				Instructors = new List<Instructors> { abercrombie }
 			};
 
 			var courses = new Course[]

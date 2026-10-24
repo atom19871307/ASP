@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using ContosoUniversity.Data;
 
 #nullable disable
 
